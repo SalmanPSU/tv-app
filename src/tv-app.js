@@ -87,7 +87,7 @@ export class TvApp extends LitElement {
       <div style= "display: inline-flex;">
       ${this.activeItem.name}
         <!-- video -->
-        <div>
+        <!-- <div>
         <iframe
           width="750"
           height="400"
@@ -95,7 +95,10 @@ export class TvApp extends LitElement {
           frameborder="0"
           allowfullscreen
         ></iframe>
-        </div>
+        </div> -->
+        <figure id="player-figure" class="image is-16by9">
+                <iframe id="player" class="has-ratio box p-0" width="560" height="315" src="https://www.youtube.com/embed/QJMBhXjtaYU?enablejsapi=1" title="Teaching for Now and Planning for Later - Reclaim Open Online" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+              </figure>
         <!-- discord / chat - optional -->
         <div style= "margin-right: 300;">
         <iframe
