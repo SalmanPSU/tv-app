@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "lit": "3.0.1",
-    "@shoelace-style/shoelace": "2.11.2"
+    "@shoelace-style/shoelace": "2.11.2",
+    "@lrnwebcomponents/video-player": "^7.0.18"
   },
   "devDependencies": {
     "rollup-plugin-copy": "3.5.0",

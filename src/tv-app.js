@@ -141,49 +141,39 @@ export class TvApp extends LitElement {
         )
       }
       </div>
-      <div style= "display: inline-flex;">
-      ${this.activeItem.name}
+      <div class="player-container">
         <!-- video -->
-        <!-- <div>
-        <iframe
-          width="750"
-          height="400"
-          src="${this.createSource()}" 
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-        </div> -->
-        <figure id="player-figure" class="image is-16by9">
-                <iframe id="player" class="has-ratio box p-0" width="560" height="315" src="https://www.youtube.com/embed/QJMBhXjtaYU?enablejsapi=1" title="Teaching for Now and Planning for Later - Reclaim Open Online" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-              </figure>
+        <video-player class="player" 
+          source="${this.createSource()}" 
+          accent-color="blue">
+        </video-player>
         <!-- discord / chat - optional -->
-        <div style= "margin-right: 300;">
-        <iframe
-          src="https://discord.com/widget?id=YOUR_DISCORD_SERVER_ID&theme=dark"
-          width="400"
-          height="800"
-          display: inline-flex;
-          allowtransparency="true"
-          frameborder="0"
-          (attribute)sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        ></iframe>
+        <div class="discord">
+          <widgetbot server="954008116800938044" channel="1106691466274803723" width="100%" height="100%"><iframe title="WidgetBot Discord chat embed" allow="clipboard-write; fullscreen" src="https://e.widgetbot.io/channels/954008116800938044/1106691466274803723?api=a45a80a7-e7cf-4a79-8414-49ca31324752"></iframe></widgetbot>
+          <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
         </div>
       </div>
+      <!-- description -->
+      <tv-channel id="description" title="${this.activeItem?.title ?? ''}" presenter="${this.activeItem.author}" time="${this.activeItem.time ?? ''}">
+        <p>${this.activeItem.description}</p>
+      </tv-channel>
       <!-- dialog -->
-      <sl-dialog label="Dialog" class="dialog">
-      ${this.activeItem.title},
-      ${this.activeItem.description}
-        <sl-button slot="footer" variant="primary" @click="${this.closeDialog}">Close</sl-button>
+      <sl-dialog label="${this.temporaryItem.title ?? ''}" class="dialog">
+        <h5>${this.temporaryItem.presenter}</h5>
+        <p class="dialog-description">
+          ${this.temporaryItem.description}
+        </p>
+        <sl-button slot="footer" variant="primary" @click="${this.watchButton}">Watch</sl-button>
       </sl-dialog>
     `;
   }
 
   changeVideo() {
-    const iframe = this.shadowRoot.querySelector('iframe');
+    const iframe = this.shadowRoot.querySelector('video-player').querySelector('iframe');
     iframe.src = this.createSource();
   }
 
-   extractVideoId(link) {
+  extractVideoId(link) {
     try {
       const url = new URL(link);
       const searchParams = new URLSearchParams(url.search);
@@ -198,15 +188,35 @@ export class TvApp extends LitElement {
     return "https://www.youtube.com/embed/" + this.extractVideoId(this.activeItem.video);
   }
 
-  closeDialog(e) {
+  openDialog(e) {
+    this.temporaryItem = {
+      id: e.target.id,
+      title: e.target.title,
+      presenter: e.target.presenter,
+      time: e.target.time,
+      description: e.target.description,
+      video: e.target.video
+    }
+    const dialog = this.shadowRoot.querySelector('.dialog');
+    dialog.show();
+  }
+  
+  closeDialog() {
     const dialog = this.shadowRoot.querySelector('.dialog');
     dialog.hide();
   }
 
-  itemClick(e) {
-    console.log(e.target);
-    const dialog = this.shadowRoot.querySelector('.dialog');
-    dialog.show();
+  watchButton(e) {
+    this.activeItem = {
+      id: this.temporaryItem.id,
+      title: this.temporaryItem.title,
+      presenter: this.temporaryItem.presenter,
+      time: this.temporaryItem.time,
+      description: this.temporaryItem.description,
+      video: this.temporaryItem.video
+    }
+    this.shadowRoot.querySelector('video-player').shadowRoot.querySelector('a11y-media-player').play();
+    this.closeDialog();
   }
 
   // LitElement life cycle for when any property changes
