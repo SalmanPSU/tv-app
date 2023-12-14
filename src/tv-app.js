@@ -235,6 +235,14 @@ export class TvApp extends LitElement {
     await fetch(source).then((resp) => resp.ok ? resp.json() : []).then((responseData) => {
       if (responseData.status === 200 && responseData.data.items && responseData.data.items.length > 0) {
         this.listings = [...responseData.data.items];
+        this.activeItem = {
+          id: this.listings[0].id,
+          title: this.listings[0].title,
+          presenter: this.listings[0].metadata.author,
+          time: this.listings[0].metadata.time,
+          description: this.listings[0].description,
+          video: this.listings[0].metadata.source
+        }
       }
     });
   }
